@@ -22,9 +22,9 @@ struct AgentToggleView: View {
                 let isAgentAvailable = agent?.isInstalled == true || agent?.configDirectoryExists == true
 
                 HStack {
-                    Image(systemName: agentType.iconName)
+                    AgentIconView(agentType: agentType)
                         .foregroundStyle(Constants.AgentColors.color(for: agentType))
-                        .frame(width: 20)
+                        .frame(width: 20, height: 20)
 
                     Text(agentType.displayName)
 

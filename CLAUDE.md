@@ -76,6 +76,7 @@ Views → ViewModels (@Observable) → SkillManager (@Observable) → Services (
 | Kiro | `~/.kiro/skills/` | `kiro` binary | Own directory only |
 | CodeBuddy | `~/.codebuddy/skills/` | `codebuddy` binary | Own directory only |
 | OpenClaw | `~/.openclaw/skills/` | `openclaw` binary | Own directory only |
+| Trae | `~/.trae/skills/` | `trae` binary | Own directory only |
 
 ## Testing
 

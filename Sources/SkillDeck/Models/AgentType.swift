@@ -13,6 +13,7 @@ enum AgentType: String, CaseIterable, Identifiable, Codable {
     case kiro = "kiro"                     // Kiro: AWS AI IDE built on Code OSS (https://kiro.dev)
     case codeBuddy = "codebuddy"           // CodeBuddy: Tencent Cloud AI coding assistant (https://www.codebuddy.ai)
     case openClaw = "openclaw"             // OpenClaw: AI coding assistant with ClawHub registry (https://openclaw.ai)
+    case trae = "trae"                       // Trae: ByteDance's AI IDE (https://trae.ai)
 
     // Identifiable protocol requirement (similar to Java's Comparable), needed for SwiftUI list rendering
     var id: String { rawValue }
@@ -29,6 +30,7 @@ enum AgentType: String, CaseIterable, Identifiable, Codable {
         case .kiro: "Kiro"
         case .codeBuddy: "CodeBuddy"
         case .openClaw: "OpenClaw"
+        case .trae: "Trae"
         }
     }
 
@@ -46,6 +48,7 @@ enum AgentType: String, CaseIterable, Identifiable, Codable {
         case .kiro: "violet"
         case .codeBuddy: "pink"
         case .openClaw: "red"
+        case .trae: "brightGreen"
         }
     }
 
@@ -63,6 +66,7 @@ enum AgentType: String, CaseIterable, Identifiable, Codable {
         case .kiro: "k.circle"                   // Letter K icon for Kiro
         case .codeBuddy: "c.circle"               // Letter C icon for CodeBuddy
         case .openClaw: "o.circle"               // Letter O icon for OpenClaw
+        case .trae: "t.circle"                     // Letter T fallback for Trae (actual icon rendered via AgentIconView)
         }
     }
 
@@ -80,6 +84,7 @@ enum AgentType: String, CaseIterable, Identifiable, Codable {
         case .kiro: "~/.kiro/skills"                       // Kiro IDE skills directory
         case .codeBuddy: "~/.codebuddy/skills"             // CodeBuddy AI assistant skills directory
         case .openClaw: "~/.openclaw/skills"               // OpenClaw AI assistant skills directory
+        case .trae: "~/.trae/skills"                         // Trae AI IDE skills directory
         }
     }
 
@@ -102,6 +107,7 @@ enum AgentType: String, CaseIterable, Identifiable, Codable {
         case .kiro: "~/.kiro"
         case .codeBuddy: "~/.codebuddy"
         case .openClaw: "~/.openclaw"
+        case .trae: "~/.trae"
         }
     }
 
@@ -118,6 +124,7 @@ enum AgentType: String, CaseIterable, Identifiable, Codable {
         case .kiro: "kiro"
         case .codeBuddy: "codebuddy"
         case .openClaw: "openclaw"
+        case .trae: "trae"
         }
     }
 

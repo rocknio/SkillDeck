@@ -228,8 +228,14 @@ struct SkillInstallView: View {
                                 get: { viewModel.selectedAgents.contains(agentType) },
                                 set: { _ in viewModel.toggleAgentSelection(agentType) }
                             )) {
-                                Label(agentType.displayName, systemImage: agentType.iconName)
-                                    .font(.caption)
+                                // Use Label with custom icon closure form instead of systemImage:
+                                // because Trae needs custom shape rendering via AgentIconView
+                                Label {
+                                    Text(agentType.displayName)
+                                } icon: {
+                                    AgentIconView(agentType: agentType)
+                                }
+                                .font(.caption)
                             }
                             .toggleStyle(.checkbox)
                             // Uninstalled Agents have reduced opacity but are still selectable
