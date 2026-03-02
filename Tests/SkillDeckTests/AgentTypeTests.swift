@@ -127,12 +127,32 @@ final class AgentTypeTests: XCTestCase {
         XCTAssertTrue(agent.additionalReadableSkillsDirectories.isEmpty)
     }
 
+    // MARK: - Trae Agent Properties
+
+    /// Verify all computed properties of the Trae agent type
+    /// Trae is ByteDance's AI IDE, standalone agent with no cross-directory reading
+    func testTraeProperties() {
+        let agent = AgentType.trae
+
+        // rawValue is used as the Codable key in lock file JSON
+        XCTAssertEqual(agent.rawValue, "trae")
+        XCTAssertEqual(agent.displayName, "Trae")
+        XCTAssertEqual(agent.detectCommand, "trae")
+        XCTAssertEqual(agent.skillsDirectoryPath, "~/.trae/skills")
+        XCTAssertEqual(agent.configDirectoryPath, "~/.trae")
+        XCTAssertEqual(agent.iconName, "t.circle")
+        XCTAssertEqual(agent.brandColor, "brightGreen")
+
+        // Trae does not read other agents' directories (standalone agent)
+        XCTAssertTrue(agent.additionalReadableSkillsDirectories.isEmpty)
+    }
+
     // MARK: - CaseIterable Count
 
     /// Verify the total number of supported agents
     /// This test catches accidental removal of agent cases
     func testAllCasesCount() {
-        // 10 agents: claudeCode, codex, geminiCLI, copilotCLI, openCode, antigravity, cursor, kiro, codeBuddy, openClaw
-        XCTAssertEqual(AgentType.allCases.count, 10)
+        // 11 agents: claudeCode, codex, geminiCLI, copilotCLI, openCode, antigravity, cursor, kiro, codeBuddy, openClaw, trae
+        XCTAssertEqual(AgentType.allCases.count, 11)
     }
 }
