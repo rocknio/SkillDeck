@@ -87,7 +87,7 @@ struct SidebarView: View {
                         Label {
                             Text(agentType.displayName)
                         } icon: {
-                            AgentIconView(agentType: agentType)
+                            Image(systemName: agentType.iconName)
                                 .foregroundStyle(Constants.AgentColors.color(for: agentType))
                         }
                     }

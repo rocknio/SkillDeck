@@ -66,7 +66,7 @@ enum AgentType: String, CaseIterable, Identifiable, Codable {
         case .kiro: "k.circle"                   // Letter K icon for Kiro
         case .codeBuddy: "c.circle"               // Letter C icon for CodeBuddy
         case .openClaw: "o.circle"               // Letter O icon for OpenClaw
-        case .trae: "t.circle"                     // Letter T fallback for Trae (actual icon rendered via AgentIconView)
+        case .trae: "t.circle"                     // Letter T icon for Trae
         }
     }
 
