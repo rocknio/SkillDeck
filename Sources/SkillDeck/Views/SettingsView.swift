@@ -5,7 +5,11 @@ import SwiftUI
 /// TabView renders as system standard preferences window style (with tab bar) on macOS
 struct SettingsView: View {
 
+    /// @AppStorage is a SwiftUI property wrapper that syncs values with UserDefaults.
+    @AppStorage(FontSettings.sizeKey) private var uiFontSize = FontSettings.defaultFontSize
+
     var body: some View {
+        let minSize = SettingsWindowSizing.minSize(forFontSize: uiFontSize)
         TabView {
             GeneralSettingsView()
                 .tabItem {
@@ -18,7 +22,7 @@ struct SettingsView: View {
                 }
         }
         // Increased height to accommodate update status UI (from 250 to 350)
-        .frame(width: 450, height: 350)
+        .frame(minWidth: minSize.width, minHeight: minSize.height)
     }
 }
 
