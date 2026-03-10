@@ -38,6 +38,10 @@ struct SidebarView: View {
     @Binding var selection: SidebarItem?
     @Environment(SkillManager.self) private var skillManager
 
+    /// @Environment reads custom font preferences from the environment values.
+    @Environment(\.appFontFamily) private var appFontFamily
+    @Environment(\.appFontBaseSize) private var appFontBaseSize
+
     /// macOS 14+ provides native SwiftUI action to open settings window
     /// @Environment(\.openSettings) gets the system-provided OpenSettingsAction from environment,
     /// calling openSettings() is equivalent to user pressing Cmd+, (more reliable than NSApp.sendAction)
@@ -55,6 +59,10 @@ struct SidebarView: View {
     /// Local import modal's ViewModel (created only when showing sheet)
     /// Same pattern as installVM: nil = hidden, non-nil = show sheet
     @State private var localImportVM: LocalImportViewModel?
+
+    private var sectionHeaderFont: Font {
+        FontSettings.font(family: appFontFamily, baseSize: appFontBaseSize, textStyle: .headline)
+    }
 
     var body: some View {
         List(selection: $selection) {
@@ -82,7 +90,9 @@ struct SidebarView: View {
                         .fill(rowBackground(for: .registry))
                 )
             } header: {
-                Text("Overview").appFont(.headline)
+                Text("Overview")
+                    .font(sectionHeaderFont)
+                    .textCase(nil)
             }
 
             Section {
@@ -112,7 +122,9 @@ struct SidebarView: View {
                     )
                 }
             } header: {
-                Text("Agents").appFont(.headline)
+                Text("Agents")
+                    .font(sectionHeaderFont)
+                    .textCase(nil)
             }
         }
         // macOS sidebar standard style
