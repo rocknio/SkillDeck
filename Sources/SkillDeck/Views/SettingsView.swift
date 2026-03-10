@@ -21,7 +21,7 @@ struct SettingsView: View {
                     Label("About", systemImage: "info.circle")
                 }
         }
-        // Increased height to accommodate update status UI (from 250 to 350)
+        // Increased height to accommodate update status UI (from 250 to 350).
         .frame(minWidth: minSize.width, minHeight: minSize.height)
     }
 }
