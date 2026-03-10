@@ -76,16 +76,14 @@ struct RegistrySkillDetailView: View {
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(skill.name)
-                    .font(.title)
+                Text(skill.name).appFont(.title)
                     .fontWeight(.bold)
                     // .textSelection(.enabled) allows the user to select and copy text
                     .textSelection(.enabled)
 
                 // "Installed" badge — same visual style as SkillInstallView and RegistrySkillRowView
                 if isInstalled {
-                    Text("Installed")
-                        .font(.caption)
+                    Text("Installed").appFont(.caption)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
                         .background(Color.green.opacity(0.15))
@@ -101,8 +99,7 @@ struct RegistrySkillDetailView: View {
                     .foregroundStyle(.secondary)
                 Text(skill.skillId)
                     .textSelection(.enabled)
-            }
-            .font(.subheadline)
+            }.appFont(.subheadline)
         }
     }
 
@@ -113,8 +110,7 @@ struct RegistrySkillDetailView: View {
     /// Grid is similar to HTML's CSS Grid — it aligns columns automatically.
     private var packageInfoSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Package Info")
-                .font(.headline)
+            Text("Package Info").appFont(.headline)
 
             Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 6) {
                 GridRow {
@@ -161,8 +157,7 @@ struct RegistrySkillDetailView: View {
                         Text("\(yesterday) installs")
                     }
                 }
-            }
-            .font(.subheadline)
+            }.appFont(.subheadline)
         }
     }
 
@@ -186,8 +181,7 @@ struct RegistrySkillDetailView: View {
             Divider()
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("Skill Metadata")
-                    .font(.headline)
+                Text("Skill Metadata").appFont(.headline)
 
                 Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 6) {
                     // Description from YAML frontmatter (may differ from the registry listing)
@@ -221,8 +215,7 @@ struct RegistrySkillDetailView: View {
                             Text(license).textSelection(.enabled)
                         }
                     }
-                }
-                .font(.subheadline)
+                }.appFont(.subheadline)
             }
         }
     }
@@ -230,8 +223,7 @@ struct RegistrySkillDetailView: View {
     /// Actions section: install button + open on skills.sh
     private var actionsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Actions")
-                .font(.headline)
+            Text("Actions").appFont(.headline)
 
             HStack(spacing: 12) {
                 // Install button — triggers the install flow via the parent's onInstall callback
@@ -261,13 +253,11 @@ struct RegistrySkillDetailView: View {
 
             // CLI install hint — shows the npx command for reference
             VStack(alignment: .leading, spacing: 4) {
-                Text("CLI Install Command")
-                    .font(.caption)
+                Text("CLI Install Command").appFont(.caption)
                     .foregroundStyle(.secondary)
 
                 // Monospaced font for code-like display
-                Text("npx skills add \(skill.source)")
-                    .font(.system(.callout, design: .monospaced))
+                Text("npx skills add \(skill.source)").appFont(.callout, design: .monospaced)
                     .textSelection(.enabled)
                     .padding(8)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -290,8 +280,7 @@ struct RegistrySkillDetailView: View {
     /// `isLoading ? <Spinner/> : error ? <Error/> : <Content/>`
     private var skillContentSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Skill Content")
-                .font(.headline)
+            Text("Skill Content").appFont(.headline)
 
             if viewModel.isLoadingContent {
                 // State 1: Loading — show spinner with descriptive label
@@ -301,8 +290,7 @@ struct RegistrySkillDetailView: View {
                         // .controlSize(.small) makes the spinner compact, appropriate for inline use
                         .controlSize(.small)
                     Text("Loading SKILL.md from GitHub...")
-                        .foregroundStyle(.secondary)
-                        .font(.subheadline)
+                        .foregroundStyle(.secondary).appFont(.subheadline)
                 }
                 .padding(.vertical, 20)
                 .frame(maxWidth: .infinity)
@@ -313,8 +301,7 @@ struct RegistrySkillDetailView: View {
                         Image(systemName: "exclamationmark.triangle")
                             .foregroundStyle(.orange)
                         Text(error)
-                            .foregroundStyle(.secondary)
-                            .font(.subheadline)
+                            .foregroundStyle(.secondary).appFont(.subheadline)
                     }
 
                     // Fallback: link to view the skill on skills.sh in a browser
@@ -339,8 +326,7 @@ struct RegistrySkillDetailView: View {
                     MarkdownContentView(markdownText: content.markdownBody)
                 } else {
                     Text("No content available.")
-                        .foregroundStyle(.secondary)
-                        .font(.subheadline)
+                        .foregroundStyle(.secondary).appFont(.subheadline)
                         .italic()
                 }
             }

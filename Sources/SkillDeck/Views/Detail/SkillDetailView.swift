@@ -106,16 +106,14 @@ struct SkillDetailView: View {
     private func headerSection(_ skill: Skill) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(skill.displayName)
-                    .font(.title)
+                Text(skill.displayName).appFont(.title)
                     .fontWeight(.bold)
 
                 ScopeBadge(scope: skill.scope)
             }
 
             if !skill.metadata.description.isEmpty {
-                Text(skill.metadata.description)
-                    .font(.body)
+                Text(skill.metadata.description).appFont(.body)
                     .foregroundStyle(.secondary)
             }
 
@@ -130,14 +128,12 @@ struct SkillDetailView: View {
                 if let license = skill.metadata.license {
                     Label(license, systemImage: "doc.text")
                 }
-            }
-            .font(.subheadline)
+            }.appFont(.subheadline)
             .foregroundStyle(.secondary)
 
             // Path display + copy button
             HStack(spacing: 4) {
-                Text(skill.canonicalURL.tildeAbbreviatedPath)
-                    .font(.caption)
+                Text(skill.canonicalURL.tildeAbbreviatedPath).appFont(.caption)
                     .foregroundStyle(.tertiary)
                     .textSelection(.enabled)
 
@@ -164,8 +160,7 @@ struct SkillDetailView: View {
                     // use system built-in replacement animation (fade + scale) when switching, more natural than manual animation
                     // Swift's ternary requires both sides to have same type; .green is Color, .tertiary is
                     // HierarchicalShapeStyle, cannot mix directly. Use AnyShapeStyle type erasure to unify types.
-                    Image(systemName: pathCopied ? "checkmark" : "doc.on.doc")
-                        .font(.caption)
+                    Image(systemName: pathCopied ? "checkmark" : "doc.on.doc").appFont(.caption)
                         .foregroundStyle(pathCopied ? AnyShapeStyle(.green) : AnyShapeStyle(.tertiary))
                         .contentTransition(.symbolEffect(.replace))
                 }
@@ -182,8 +177,7 @@ struct SkillDetailView: View {
     @ViewBuilder
     private func agentAssignmentSection(_ skill: Skill) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Agent Assignment")
-                .font(.headline)
+            Text("Agent Assignment").appFont(.headline)
 
             AgentToggleView(skill: skill, viewModel: viewModel)
         }
@@ -193,8 +187,7 @@ struct SkillDetailView: View {
     @ViewBuilder
     private func markdownSection(_ skill: Skill) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Documentation")
-                .font(.headline)
+            Text("Documentation").appFont(.headline)
 
             if skill.markdownBody.isEmpty {
                 Text("No documentation available")
@@ -203,8 +196,7 @@ struct SkillDetailView: View {
             } else {
                 // Display markdown source in monospace font
                 // Can be replaced with rendered markdown in the future
-                Text(skill.markdownBody)
-                    .font(.system(.body, design: .monospaced))
+                Text(skill.markdownBody).appFont(.body, design: .monospaced)
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
@@ -229,11 +221,9 @@ struct SkillDetailView: View {
         let inputIsEmpty = viewModel.repoURLInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
 
         VStack(alignment: .leading, spacing: 8) {
-            Text("Package Info")
-                .font(.headline)
+            Text("Package Info").appFont(.headline)
 
-            Text("This skill is not linked to a repository. Link it to enable update checking.")
-                .font(.subheadline)
+            Text("This skill is not linked to a repository. Link it to enable update checking.").appFont(.subheadline)
                 .foregroundStyle(.secondary)
 
             // Input row: TextField + Link button
@@ -252,8 +242,7 @@ struct SkillDetailView: View {
                     // Linking: show ProgressView (spinning indicator)
                     ProgressView()
                         .controlSize(.small)
-                    Text("Linking...")
-                        .font(.caption)
+                    Text("Linking...").appFont(.caption)
                         .foregroundStyle(.secondary)
                 } else {
                     Button("Link") {
@@ -268,8 +257,7 @@ struct SkillDetailView: View {
                 HStack(spacing: 4) {
                     Image(systemName: "exclamationmark.triangle")
                         .foregroundStyle(.orange)
-                    Text(error)
-                        .font(.caption)
+                    Text(error).appFont(.caption)
                         .foregroundStyle(.secondary)
                 }
             }
@@ -282,8 +270,7 @@ struct SkillDetailView: View {
         VStack(alignment: .leading, spacing: 8) {
             // 标题行：Package Info + 更新检查按钮
             HStack {
-                Text("Package Info")
-                    .font(.headline)
+                Text("Package Info").appFont(.headline)
 
                 Spacer()
 
@@ -313,13 +300,11 @@ struct SkillDetailView: View {
                 GridRow {
                     if let commitHash = skill.localCommitHash {
                         Text("Commit").foregroundStyle(.secondary)
-                        Text(commitHash)
-                            .font(.system(.body, design: .monospaced))
+                        Text(commitHash).appFont(.body, design: .monospaced)
                             .textSelection(.enabled)
                     } else {
                         Text("Tree Hash").foregroundStyle(.secondary)
-                        Text(lockEntry.skillFolderHash)
-                            .font(.system(.body, design: .monospaced))
+                        Text(lockEntry.skillFolderHash).appFont(.body, design: .monospaced)
                             .textSelection(.enabled)
                     }
                 }
@@ -331,8 +316,7 @@ struct SkillDetailView: View {
                     Text("Updated").foregroundStyle(.secondary)
                     Text(lockEntry.updatedAt.formattedDate)
                 }
-            }
-            .font(.subheadline)
+            }.appFont(.subheadline)
         }
     }
 
@@ -351,8 +335,7 @@ struct SkillDetailView: View {
             HStack(spacing: 4) {
                 ProgressView()
                     .controlSize(.small)
-                Text("Checking...")
-                    .font(.caption)
+                Text("Checking...").appFont(.caption)
                     .foregroundStyle(.secondary)
             }
         } else if viewModel.isUpdating {
@@ -360,16 +343,14 @@ struct SkillDetailView: View {
             HStack(spacing: 4) {
                 ProgressView()
                     .controlSize(.small)
-                Text("Updating...")
-                    .font(.caption)
+                Text("Updating...").appFont(.caption)
                     .foregroundStyle(.secondary)
             }
         } else if skill.hasUpdate {
             // Has available update: show hash comparison + GitHub link + Update button
             VStack(alignment: .trailing, spacing: 4) {
                 HStack(spacing: 8) {
-                    Label("Update Available", systemImage: "arrow.up.circle.fill")
-                        .font(.caption)
+                    Label("Update Available", systemImage: "arrow.up.circle.fill").appFont(.caption)
                         .foregroundStyle(.orange)
 
                     Button("Update") {
@@ -384,16 +365,14 @@ struct SkillDetailView: View {
             }
         } else if viewModel.showUpToDate {
             // Already up to date (auto-disappears after 2 seconds)
-            Label("Up to Date", systemImage: "checkmark.circle.fill")
-                .font(.caption)
+            Label("Up to Date", systemImage: "checkmark.circle.fill").appFont(.caption)
                 .foregroundStyle(.green)
         } else if let error = viewModel.updateError {
             // 更新检查出错
             HStack(spacing: 4) {
                 Image(systemName: "exclamationmark.triangle")
                     .foregroundStyle(.orange)
-                Text(error)
-                    .font(.caption)
+                Text(error).appFont(.caption)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
             }
@@ -424,13 +403,11 @@ struct SkillDetailView: View {
 
             if let localShort, let remoteShort {
                 // Have both commit hashes: show comparison `abc1234 → def5678`
-                Text("\(localShort) → \(remoteShort)")
-                    .font(.system(.caption2, design: .monospaced))
+                Text("\(localShort) → \(remoteShort)").appFont(.caption2, design: .monospaced)
                     .foregroundStyle(.secondary)
             } else if let remoteShort {
                 // Only have remote commit hash (fallback when old skill backfill failed)
-                Text("→ \(remoteShort)")
-                    .font(.system(.caption2, design: .monospaced))
+                Text("→ \(remoteShort)").appFont(.caption2, design: .monospaced)
                     .foregroundStyle(.secondary)
             }
 
@@ -445,8 +422,7 @@ struct SkillDetailView: View {
                         Text("View changes on GitHub")
                         // arrow.up.right is external link icon (↗), indicates will jump to browser
                         Image(systemName: "arrow.up.right")
-                    }
-                    .font(.caption2)
+                    }.appFont(.caption2)
                 }
                 .buttonStyle(.link)
             }

@@ -5,7 +5,11 @@ import SwiftUI
 /// TabView renders as system standard preferences window style (with tab bar) on macOS
 struct SettingsView: View {
 
+    /// @AppStorage is a SwiftUI property wrapper that syncs values with UserDefaults.
+    @AppStorage(FontSettings.sizeKey) private var uiFontSize = FontSettings.defaultFontSize
+
     var body: some View {
+        let minSize = SettingsWindowSizing.minSize(forFontSize: uiFontSize)
         TabView {
             GeneralSettingsView()
                 .tabItem {
@@ -17,13 +21,18 @@ struct SettingsView: View {
                     Label("About", systemImage: "info.circle")
                 }
         }
-        // Increased height to accommodate update status UI (from 250 to 350)
-        .frame(width: 450, height: 350)
+        // Increased height to accommodate update status UI (from 250 to 350).
+        .frame(minWidth: minSize.width, minHeight: minSize.height)
     }
 }
 
 /// General settings
 struct GeneralSettingsView: View {
+
+    /// @AppStorage keeps UI preferences in UserDefaults and updates the view automatically.
+    @AppStorage(FontSettings.familyKey) private var uiFontFamily = FontSettings.systemFontFamily
+    @AppStorage(FontSettings.sizeKey) private var uiFontSize = FontSettings.defaultFontSize
+
     var body: some View {
         Form {
             Section("Paths") {
@@ -37,6 +46,30 @@ struct GeneralSettingsView: View {
                         .textSelection(.enabled)
                         .foregroundStyle(.secondary)
                 }
+            }
+
+            Section("Font") {
+                LabeledContent("Family") {
+                    Picker("Family", selection: $uiFontFamily) {
+                        ForEach(FontSettings.availableFontFamilies, id: \.self) { family in
+                            Text(family)
+                        }
+                    }
+                    .labelsHidden()
+                    .pickerStyle(.menu)
+                }
+
+                LabeledContent("Size") {
+                    Stepper(value: $uiFontSize, in: FontSettings.minFontSize...FontSettings.maxFontSize, step: 1) {
+                        Text("\(Int(uiFontSize)) pt")
+                            .monospacedDigit()
+                    }
+                }
+
+                Text("Preview: The quick brown fox jumps over the lazy dog")
+                    .font(FontSettings.font(family: uiFontFamily, size: uiFontSize))
+                    .foregroundStyle(.secondary)
+                    .padding(.top, 4)
             }
         }
         .formStyle(.grouped)
@@ -60,8 +93,7 @@ struct AboutSettingsView: View {
                 .font(.system(size: 48))
                 .foregroundStyle(.blue)
 
-            Text("SkillDeck")
-                .font(.title)
+            Text("SkillDeck").appFont(.title)
                 .fontWeight(.bold)
 
             Text("Native macOS Agent Skills Manager")
@@ -70,14 +102,12 @@ struct AboutSettingsView: View {
             // Read version number from Info.plist, Bundle.main contains Info.plist when running as .app bundle
             // CFBundleShortVersionString is the user-visible version number (e.g., "1.0.0")
             // Falls back to "dev" if running via swift run (no .app bundle)
-            Text("v\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "dev")")
-                .font(.caption)
+            Text("v\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "dev")").appFont(.caption)
                 .foregroundStyle(.tertiary)
 
             // Link is SwiftUI built-in hyperlink component, calls system default browser to open URL when clicked
             // Renders as blue clickable text on macOS, similar to HTML's <a> tag
-            Link("GitHub", destination: URL(string: "https://github.com/crossoverjie/SkillDeck")!)
-                .font(.caption)
+            Link("GitHub", destination: URL(string: "https://github.com/crossoverjie/SkillDeck")!).appFont(.caption)
 
             // Divider is horizontal separator line (similar to HTML's <hr>), used to visually separate app info and update status area
             Divider()
@@ -107,8 +137,7 @@ struct AboutSettingsView: View {
                 // controlSize(.small) controls size to small
                 ProgressView()
                     .controlSize(.small)
-                Text("Checking for updates...")
-                    .font(.caption)
+                Text("Checking for updates...").appFont(.caption)
                     .foregroundStyle(.secondary)
             }
         } else if skillManager.isDownloadingUpdate {
@@ -122,8 +151,7 @@ struct AboutSettingsView: View {
 
                 // Show percentage (multiply by 100 and keep integer)
                 // Int() truncates Double to integer (similar to Java's (int) cast)
-                Text("Downloading... \(Int(skillManager.downloadProgress * 100))%")
-                    .font(.caption)
+                Text("Downloading... \(Int(skillManager.downloadProgress * 100))%").appFont(.caption)
                     .foregroundStyle(.secondary)
                     .monospacedDigit()  // Monospaced digit font, avoids text jitter when percentage changes
             }
@@ -132,10 +160,8 @@ struct AboutSettingsView: View {
             VStack(spacing: 6) {
                 HStack(spacing: 4) {
                     Image(systemName: "exclamationmark.triangle.fill")
-                        .foregroundStyle(.red)
-                        .font(.caption)
-                    Text(error)
-                        .font(.caption)
+                        .foregroundStyle(.red).appFont(.caption)
+                    Text(error).appFont(.caption)
                         .foregroundStyle(.red)
                         .lineLimit(2)  // Limit error message to max 2 lines
                 }
@@ -153,8 +179,7 @@ struct AboutSettingsView: View {
                     // Use orange arrow icon to indicate update is available
                     Image(systemName: "arrow.up.circle.fill")
                         .foregroundStyle(.orange)
-                    Text("Update available: v\(updateInfo.version)")
-                        .font(.caption)
+                    Text("Update available: v\(updateInfo.version)").appFont(.caption)
                         .fontWeight(.medium)
                 }
 
@@ -170,8 +195,7 @@ struct AboutSettingsView: View {
                     // "View on GitHub" link opens Release page in browser
                     // Uses Link component instead of Button because it's external navigation (opens browser)
                     if let url = URL(string: updateInfo.htmlUrl) {
-                        Link("View on GitHub", destination: url)
-                            .font(.caption)
+                        Link("View on GitHub", destination: url).appFont(.caption)
                     }
                 }
             }

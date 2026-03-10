@@ -26,16 +26,14 @@ struct RegistrySkillRowView: View {
             // Skill info (left side)
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
-                    Text(skill.name)
-                        .font(.headline)
+                    Text(skill.name).appFont(.headline)
                         // lineLimit(1) ensures name doesn't wrap to multiple lines
                         .lineLimit(1)
 
                     // "Installed" badge — matches the existing SkillInstallView pattern
                     // (green capsule with "Installed" text)
                     if isInstalled {
-                        Text("Installed")
-                            .font(.caption2)
+                        Text("Installed").appFont(.caption2)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
                             .background(Color.green.opacity(0.15))
@@ -49,7 +47,7 @@ struct RegistrySkillRowView: View {
                 // Label combines an icon and text — macOS native component
                 // systemImage refers to SF Symbols (Apple's icon library)
                 Label(skill.source, systemImage: "link")
-                    .font(.caption)
+                    .appFont(.caption)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
             }
@@ -59,15 +57,13 @@ struct RegistrySkillRowView: View {
             // Install count + daily change (right side)
             VStack(alignment: .trailing, spacing: 2) {
                 // Formatted install count (e.g., "135.6K")
-                Text(skill.formattedInstalls)
-                    .font(.subheadline)
+                Text(skill.formattedInstalls).appFont(.subheadline)
                     .fontWeight(.medium)
                     // monospacedDigit prevents numbers from shifting when values change
                     // (each digit occupies the same width, like tabular figures in typography)
                     .monospacedDigit()
 
-                Text("installs")
-                    .font(.caption2)
+                Text("installs").appFont(.caption2)
                     // .tertiary is lighter than .secondary — used for least important text
                     .foregroundStyle(.tertiary)
 
@@ -76,10 +72,8 @@ struct RegistrySkillRowView: View {
                 if let change = skill.change, change != 0 {
                     HStack(spacing: 2) {
                         // Up arrow icon for positive change
-                        Image(systemName: "arrow.up.right")
-                            .font(.caption2)
-                        Text("+\(change)")
-                            .font(.caption2)
+                        Image(systemName: "arrow.up.right").appFont(.caption2)
+                        Text("+\(change)").appFont(.caption2)
                     }
                     .foregroundStyle(.green)
                 }
