@@ -113,8 +113,7 @@ struct RegistryBrowserView: View {
                     Task { await viewModel.selectCategory(category) }
                 } label: {
                     // Label combines icon (SF Symbol) and text
-                    Label(category.displayName, systemImage: category.iconName)
-                        .font(.subheadline)
+                    Label(category.displayName, systemImage: category.iconName).appFont(.subheadline)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
                         .background(
@@ -149,8 +148,7 @@ struct RegistryBrowserView: View {
         VStack(spacing: 12) {
             ProgressView()
                 .controlSize(.large)
-            Text("Loading registry...")
-                .font(.subheadline)
+            Text("Loading registry...").appFont(.subheadline)
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -211,11 +209,9 @@ struct RegistryBrowserView: View {
                 Image(systemName: "exclamationmark.triangle")
                     .font(.system(size: 40))
                     .foregroundStyle(.orange)
-                Text("Something went wrong")
-                    .font(.title3)
+                Text("Something went wrong").appFont(.title3)
                     .fontWeight(.medium)
-                Text(errorMessage)
-                    .font(.subheadline)
+                Text(errorMessage).appFont(.subheadline)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                 Button("Try Again") {

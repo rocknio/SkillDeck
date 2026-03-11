@@ -47,10 +47,18 @@ struct SkillDeckApp: App {
     /// Using @State lets SwiftUI manage its lifecycle
     @State private var skillManager = SkillManager()
 
+    /// @AppStorage is a SwiftUI property wrapper that syncs values with UserDefaults.
+    @AppStorage(FontSettings.familyKey) private var uiFontFamily = FontSettings.systemFontFamily
+    @AppStorage(FontSettings.sizeKey) private var uiFontSize = FontSettings.defaultFontSize
+
     /// NSApplicationDelegateAdaptor bridges SwiftUI with traditional AppKit lifecycle
     /// Through AppDelegate we can perform AppKit-level operations at app launch
     /// Used here to solve the issue of windows not auto-activating when launched from command line
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
+    private var appFont: Font {
+        FontSettings.font(family: uiFontFamily, size: uiFontSize)
+    }
 
     var body: some Scene {
         // WindowGroup creates the main window
@@ -60,6 +68,9 @@ struct SkillDeckApp: App {
                 // All child views can access it via @Environment
                 // Similar to React's Context Provider or Android's dependency injection
                 .environment(skillManager)
+                .environment(\.font, appFont)
+                .environment(\.appFontFamily, uiFontFamily)
+                .environment(\.appFontBaseSize, uiFontSize)
         }
         // Set the window's default size
         .defaultSize(width: 1000, height: 700)
@@ -72,6 +83,9 @@ struct SkillDeckApp: App {
         Settings {
             SettingsView()
                 .environment(skillManager)
+                .environment(\.font, appFont)
+                .environment(\.appFontFamily, uiFontFamily)
+                .environment(\.appFontBaseSize, uiFontSize)
         }
     }
 }
