@@ -29,7 +29,7 @@ struct ProxySettingsView: View {
             Section("Proxy") {
                 Toggle("Enable Proxy", isOn: $proxyEnabled)
 
-                LabeledContent("Type") {
+                LabeledContent {
                     Picker("Type", selection: $proxyTypeRaw) {
                         ForEach(ProxySettings.ProxyType.allCases) { type in
                             Text(type.displayName).tag(type.rawValue)
@@ -37,30 +37,70 @@ struct ProxySettingsView: View {
                     }
                     .labelsHidden()
                     .pickerStyle(.menu)
+                } label: {
+                    HStack(spacing: 6) {
+                        Text("Type")
+                        Text("HTTPS / SOCKS5")
+                            .appFont(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                    .lineLimit(1)
                 }
 
-                LabeledContent("Host") {
-                    TextField("Proxy host", text: $proxyHost)
+                LabeledContent {
+                    TextField("Host", text: $proxyHost)
                         .textFieldStyle(.roundedBorder)
                         .frame(width: 220)
+                } label: {
+                    HStack(spacing: 6) {
+                        Text("Host")
+                        Text("e.g. 127.0.0.1")
+                            .appFont(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                    .lineLimit(1)
                 }
 
-                LabeledContent("Port") {
+                LabeledContent {
                     TextField("Port", value: $proxyPort, format: .number)
                         .textFieldStyle(.roundedBorder)
                         .frame(width: 120)
+                } label: {
+                    HStack(spacing: 6) {
+                        Text("Port")
+                        Text("1–65535")
+                            .appFont(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                    .lineLimit(1)
                 }
 
-                LabeledContent("Username") {
-                    TextField("Optional", text: $proxyUsername)
+                LabeledContent {
+                    TextField("Username", text: $proxyUsername)
                         .textFieldStyle(.roundedBorder)
                         .frame(width: 220)
+                } label: {
+                    HStack(spacing: 6) {
+                        Text("Username")
+                        Text("optional")
+                            .appFont(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                    .lineLimit(1)
                 }
 
-                LabeledContent("Password") {
-                    SecureField("Stored in Keychain", text: $proxyPassword)
+                LabeledContent {
+                    SecureField("Password", text: $proxyPassword)
                         .textFieldStyle(.roundedBorder)
                         .frame(width: 220)
+                } label: {
+                    HStack(spacing: 6) {
+                        Text("Password")
+                        Text("Keychain")
+                            .appFont(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                    .lineLimit(1)
                 }
 
                 HStack(spacing: 12) {
