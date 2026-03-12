@@ -14,6 +14,7 @@ actor NetworkSessionProvider {
     static let proxyTypeKey = "proxy.type"
     static let proxyHostKey = "proxy.host"
     static let proxyPortKey = "proxy.port"
+    static let proxyAuthEnabledKey = "proxy.auth.enabled"
     static let proxyUsernameKey = "proxy.username"
     static let proxyBypassKey = "proxy.bypass"
 
@@ -99,7 +100,9 @@ actor NetworkSessionProvider {
 
         let host = defaults.string(forKey: NetworkSessionProvider.proxyHostKey) ?? ""
         let port = defaults.integer(forKey: NetworkSessionProvider.proxyPortKey)
-        let username = defaults.string(forKey: NetworkSessionProvider.proxyUsernameKey)
+
+        let authEnabled = defaults.object(forKey: NetworkSessionProvider.proxyAuthEnabledKey) as? Bool ?? true
+        let username = authEnabled ? defaults.string(forKey: NetworkSessionProvider.proxyUsernameKey) : nil
 
         let bypassRaw = defaults.string(forKey: NetworkSessionProvider.proxyBypassKey) ?? ""
         let bypassList = parseBypassList(bypassRaw)
@@ -113,7 +116,7 @@ actor NetworkSessionProvider {
             bypassList: bypassList
         )
 
-        let password = try? await keychain.getPassword(forKey: NetworkSessionProvider.proxyPasswordKeychainKey)
+        let password = authEnabled ? (try? await keychain.getPassword(forKey: NetworkSessionProvider.proxyPasswordKeychainKey)) : nil
         return (settings, password)
     }
 
@@ -131,6 +134,7 @@ actor NetworkSessionProvider {
             settings.type.rawValue,
             settings.host,
             String(settings.port),
+            (settings.username == nil) ? "auth:0" : "auth:1",
             settings.username ?? "",
             bypass,
             password ?? ""

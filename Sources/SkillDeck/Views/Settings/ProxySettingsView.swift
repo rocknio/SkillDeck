@@ -10,6 +10,7 @@ struct ProxySettingsView: View {
     @AppStorage(NetworkSessionProvider.proxyTypeKey) private var proxyTypeRaw = ProxySettings.ProxyType.https.rawValue
     @AppStorage(NetworkSessionProvider.proxyHostKey) private var proxyHost = ""
     @AppStorage(NetworkSessionProvider.proxyPortKey) private var proxyPort = 0
+    @AppStorage(NetworkSessionProvider.proxyAuthEnabledKey) private var proxyAuthEnabled = true
     @AppStorage(NetworkSessionProvider.proxyUsernameKey) private var proxyUsername = ""
     @AppStorage(NetworkSessionProvider.proxyBypassKey) private var proxyBypassRaw = ""
 
@@ -27,9 +28,11 @@ struct ProxySettingsView: View {
 
     var body: some View {
         Form {
-            Section("Proxy") {
+            Section("Enable") {
                 Toggle("Enable Proxy", isOn: $proxyEnabled)
+            }
 
+            Section("Server") {
                 Button("Import from Environment") {
                     Task {
                         await importFromEnvironment()
@@ -41,6 +44,7 @@ struct ProxySettingsView: View {
                         .foregroundStyle(.secondary)
                         .appFont(.caption)
                 }
+
                 Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 10) {
                     GridRow {
                         HStack(spacing: 6) {
@@ -99,64 +103,6 @@ struct ProxySettingsView: View {
                                 .frame(width: 120)
                         }
                     }
-
-                    GridRow {
-                        HStack(spacing: 6) {
-                            Text("Username")
-                            Text("optional")
-                                .appFont(.caption2)
-                                .foregroundStyle(.secondary)
-                        }
-                        .lineLimit(1)
-                        .frame(width: 170, alignment: .leading)
-
-                        HStack {
-                            Spacer(minLength: 0)
-                            TextField("", text: $proxyUsername)
-                                .textFieldStyle(.roundedBorder)
-                                .frame(width: 220)
-                        }
-                    }
-
-                    GridRow {
-                        HStack(spacing: 6) {
-                            Text("Password")
-                            Text("Keychain")
-                                .appFont(.caption2)
-                                .foregroundStyle(.secondary)
-                        }
-                        .lineLimit(1)
-                        .frame(width: 170, alignment: .leading)
-
-                        HStack {
-                            Spacer(minLength: 0)
-                            SecureField("", text: $proxyPassword)
-                                .textFieldStyle(.roundedBorder)
-                                .frame(width: 220)
-                        }
-                    }
-                }
-
-                HStack(spacing: 12) {
-                    Button("Save Password") {
-                        Task {
-                            await savePassword()
-                        }
-                    }
-                    .disabled(!proxyEnabled)
-
-                    Button("Clear Password") {
-                        Task {
-                            await clearPassword()
-                        }
-                    }
-                    .disabled(!proxyEnabled)
-
-                    if let passwordStatusMessage {
-                        Text(passwordStatusMessage)
-                            .foregroundStyle(.secondary)
-                            .appFont(.caption)
-                    }
                 }
 
                 if proxyEnabled, !isValid {
@@ -165,6 +111,73 @@ struct ProxySettingsView: View {
                         .appFont(.caption)
                 }
             }
+            .disabled(!proxyEnabled)
+
+            Section("Authentication") {
+                Toggle("Enable Authentication", isOn: $proxyAuthEnabled)
+
+                Group {
+                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 10) {
+                        GridRow {
+                            HStack(spacing: 6) {
+                                Text("Username")
+                                Text("optional")
+                                    .appFont(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .lineLimit(1)
+                            .frame(width: 170, alignment: .leading)
+
+                            HStack {
+                                Spacer(minLength: 0)
+                                TextField("", text: $proxyUsername)
+                                    .textFieldStyle(.roundedBorder)
+                                    .frame(width: 220)
+                            }
+                        }
+
+                        GridRow {
+                            HStack(spacing: 6) {
+                                Text("Password")
+                                Text("Keychain")
+                                    .appFont(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .lineLimit(1)
+                            .frame(width: 170, alignment: .leading)
+
+                            HStack {
+                                Spacer(minLength: 0)
+                                SecureField("", text: $proxyPassword)
+                                    .textFieldStyle(.roundedBorder)
+                                    .frame(width: 220)
+                            }
+                        }
+                    }
+
+                    HStack(spacing: 12) {
+                        Button("Save Password") {
+                            Task {
+                                await savePassword()
+                            }
+                        }
+
+                        Button("Clear Password") {
+                            Task {
+                                await clearPassword()
+                            }
+                        }
+
+                        if let passwordStatusMessage {
+                            Text(passwordStatusMessage)
+                                .foregroundStyle(.secondary)
+                                .appFont(.caption)
+                        }
+                    }
+                }
+                .disabled(!proxyAuthEnabled)
+            }
+            .disabled(!proxyEnabled)
 
             Section("Bypass") {
                 Text("Requests matching these hosts will NOT use the proxy. Separate items with commas or new lines.")
@@ -178,6 +191,7 @@ struct ProxySettingsView: View {
                     .foregroundStyle(.secondary)
                     .appFont(.caption)
             }
+            .disabled(!proxyEnabled)
         }
         .formStyle(.grouped)
         .padding()
@@ -199,6 +213,7 @@ struct ProxySettingsView: View {
         proxyTypeRaw = imported.type.rawValue
         proxyHost = imported.host
         proxyPort = imported.port
+        proxyAuthEnabled = imported.username != nil || imported.password != nil
         proxyUsername = imported.username ?? ""
         proxyBypassRaw = imported.bypassList.joined(separator: ", ")
 
