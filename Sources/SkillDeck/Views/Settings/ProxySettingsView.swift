@@ -15,6 +15,7 @@ struct ProxySettingsView: View {
 
     @State private var proxyPassword = ""
     @State private var passwordStatusMessage: String?
+    @State private var importStatusMessage: String?
 
     private let keychain = KeychainService(service: "SkillDeck")
 
@@ -28,6 +29,18 @@ struct ProxySettingsView: View {
         Form {
             Section("Proxy") {
                 Toggle("Enable Proxy", isOn: $proxyEnabled)
+
+                Button("Import from Environment") {
+                    Task {
+                        await importFromEnvironment()
+                    }
+                }
+
+                if let importStatusMessage {
+                    Text(importStatusMessage)
+                        .foregroundStyle(.secondary)
+                        .appFont(.caption)
+                }
                 Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 10) {
                     GridRow {
                         HStack(spacing: 6) {
@@ -171,6 +184,35 @@ struct ProxySettingsView: View {
         .task {
             await loadPassword()
         }
+    }
+
+    private func importFromEnvironment() async {
+        importStatusMessage = nil
+
+        let env = ProcessInfo.processInfo.environment
+        guard let imported = ProxyEnvironmentImporter.importFromEnvironment(env) else {
+            importStatusMessage = "No proxy environment variables found."
+            return
+        }
+
+        proxyEnabled = true
+        proxyTypeRaw = imported.type.rawValue
+        proxyHost = imported.host
+        proxyPort = imported.port
+        proxyUsername = imported.username ?? ""
+        proxyBypassRaw = imported.bypassList.joined(separator: ", ")
+
+        if let password = imported.password {
+            proxyPassword = password
+            do {
+                try await keychain.setPassword(password, forKey: NetworkSessionProvider.proxyPasswordKeychainKey)
+            } catch {
+                importStatusMessage = "Imported (password save failed)"
+                return
+            }
+        }
+
+        importStatusMessage = "Imported"
     }
 
     private func loadPassword() async {
