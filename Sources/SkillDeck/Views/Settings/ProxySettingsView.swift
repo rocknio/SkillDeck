@@ -28,79 +28,86 @@ struct ProxySettingsView: View {
         Form {
             Section("Proxy") {
                 Toggle("Enable Proxy", isOn: $proxyEnabled)
-
-                LabeledContent {
-                    Picker("Type", selection: $proxyTypeRaw) {
-                        ForEach(ProxySettings.ProxyType.allCases) { type in
-                            Text(type.displayName).tag(type.rawValue)
+                Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 10) {
+                    GridRow {
+                        HStack(spacing: 6) {
+                            Text("Type")
+                            Text("HTTPS / SOCKS5")
+                                .appFont(.caption2)
+                                .foregroundStyle(.secondary)
                         }
-                    }
-                    .labelsHidden()
-                    .pickerStyle(.menu)
-                } label: {
-                    HStack(spacing: 6) {
-                        Text("Type")
-                        Text("HTTPS / SOCKS5")
-                            .appFont(.caption2)
-                            .foregroundStyle(.secondary)
-                    }
-                    .lineLimit(1)
-                }
+                        .lineLimit(1)
+                        .frame(width: 170, alignment: .leading)
 
-                LabeledContent {
-                    TextField("Host", text: $proxyHost)
-                        .textFieldStyle(.roundedBorder)
-                        .frame(width: 220)
-                } label: {
-                    HStack(spacing: 6) {
-                        Text("Host")
-                        Text("e.g. 127.0.0.1")
-                            .appFont(.caption2)
-                            .foregroundStyle(.secondary)
+                        Picker("Type", selection: $proxyTypeRaw) {
+                            ForEach(ProxySettings.ProxyType.allCases) { type in
+                                Text(type.displayName).tag(type.rawValue)
+                            }
+                        }
+                        .labelsHidden()
+                        .pickerStyle(.menu)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .lineLimit(1)
-                }
 
-                LabeledContent {
-                    TextField("Port", value: $proxyPort, format: .number)
-                        .textFieldStyle(.roundedBorder)
-                        .frame(width: 120)
-                } label: {
-                    HStack(spacing: 6) {
-                        Text("Port")
-                        Text("1–65535")
-                            .appFont(.caption2)
-                            .foregroundStyle(.secondary)
-                    }
-                    .lineLimit(1)
-                }
+                    GridRow {
+                        HStack(spacing: 6) {
+                            Text("Host")
+                            Text("e.g. 127.0.0.1")
+                                .appFont(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                        .lineLimit(1)
+                        .frame(width: 170, alignment: .leading)
 
-                LabeledContent {
-                    TextField("Username", text: $proxyUsername)
-                        .textFieldStyle(.roundedBorder)
-                        .frame(width: 220)
-                } label: {
-                    HStack(spacing: 6) {
-                        Text("Username")
-                        Text("optional")
-                            .appFont(.caption2)
-                            .foregroundStyle(.secondary)
+                        TextField("Host", text: $proxyHost)
+                            .textFieldStyle(.roundedBorder)
+                            .frame(width: 220, alignment: .leading)
                     }
-                    .lineLimit(1)
-                }
 
-                LabeledContent {
-                    SecureField("Password", text: $proxyPassword)
-                        .textFieldStyle(.roundedBorder)
-                        .frame(width: 220)
-                } label: {
-                    HStack(spacing: 6) {
-                        Text("Password")
-                        Text("Keychain")
-                            .appFont(.caption2)
-                            .foregroundStyle(.secondary)
+                    GridRow {
+                        HStack(spacing: 6) {
+                            Text("Port")
+                            Text("1–65535")
+                                .appFont(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                        .lineLimit(1)
+                        .frame(width: 170, alignment: .leading)
+
+                        TextField("Port", value: $proxyPort, format: .number)
+                            .textFieldStyle(.roundedBorder)
+                            .frame(width: 120, alignment: .leading)
                     }
-                    .lineLimit(1)
+
+                    GridRow {
+                        HStack(spacing: 6) {
+                            Text("Username")
+                            Text("optional")
+                                .appFont(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                        .lineLimit(1)
+                        .frame(width: 170, alignment: .leading)
+
+                        TextField("Username", text: $proxyUsername)
+                            .textFieldStyle(.roundedBorder)
+                            .frame(width: 220, alignment: .leading)
+                    }
+
+                    GridRow {
+                        HStack(spacing: 6) {
+                            Text("Password")
+                            Text("Keychain")
+                                .appFont(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                        .lineLimit(1)
+                        .frame(width: 170, alignment: .leading)
+
+                        SecureField("Password", text: $proxyPassword)
+                            .textFieldStyle(.roundedBorder)
+                            .frame(width: 220, alignment: .leading)
+                    }
                 }
 
                 HStack(spacing: 12) {
