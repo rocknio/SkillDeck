@@ -44,6 +44,9 @@ struct SidebarView: View {
     @Environment(\.appFontFamily) private var appFontFamily
     @Environment(\.appFontBaseSize) private var appFontBaseSize
 
+    @Environment(\.localizationBundle) private var localizationBundle
+    @Environment(\.locale) private var locale
+
     /// macOS 14+ provides native SwiftUI action to open settings window
     /// @Environment(\.openSettings) gets the system-provided OpenSettingsAction from environment,
     /// calling openSettings() is equivalent to user pressing Cmd+, (more reliable than NSApp.sendAction)
@@ -71,7 +74,11 @@ struct SidebarView: View {
             // Section creates groups (shown as collapsible groups in macOS sidebar)
             Section {
                 sidebarRow(item: .dashboard) {
-                    Label("Dashboard", systemImage: "square.grid.2x2")
+                    Label {
+                        LText(key: L10nKeys.sidebarDashboard)
+                    } icon: {
+                        Image(systemName: "square.grid.2x2")
+                    }
                 }
                 .badge(skillManager.skills.count)
                 // .listRowBackground must be the LAST modifier on the row.
@@ -85,7 +92,11 @@ struct SidebarView: View {
 
                 // F09: Registry browser — browse and search skills.sh catalog
                 sidebarRow(item: .registry) {
-                    Label("Registry", systemImage: "globe")
+                    Label {
+                        LText(key: L10nKeys.sidebarRegistry)
+                    } icon: {
+                        Image(systemName: "globe")
+                    }
                 }
                 .listRowBackground(
                     RoundedRectangle(cornerRadius: 6)
@@ -93,14 +104,18 @@ struct SidebarView: View {
                 )
 
                 sidebarRow(item: .clawHub) {
-                    Label("ClawHub", systemImage: "shippingbox")
+                    Label {
+                        LText(key: L10nKeys.sidebarClawHub)
+                    } icon: {
+                        Image(systemName: "shippingbox")
+                    }
                 }
                 .listRowBackground(
                     RoundedRectangle(cornerRadius: 6)
                         .fill(rowBackground(for: .clawHub))
                 )
             } header: {
-                Text("Overview")
+                LText(key: L10nKeys.sidebarSectionOverview)
                     .font(sectionHeaderFont)
                     .textCase(nil)
             }
@@ -134,14 +149,14 @@ struct SidebarView: View {
                     )
                 }
             } header: {
-                Text("Agents")
+                LText(key: L10nKeys.sidebarSectionAgents)
                     .font(sectionHeaderFont)
                     .textCase(nil)
             }
         }
         // macOS sidebar standard style
         .listStyle(.sidebar)
-        .navigationTitle("SkillDeck")
+        .navigationTitle(L10n.string(L10nKeys.appName, bundle: localizationBundle, locale: locale))
         // Sidebar top toolbar action buttons (native macOS toolbar style)
         // Works with .navigationSplitViewColumnWidth(min: 180) minimum width constraint in ContentView,
         // ensures sidebar won't be too narrow when window state is restored, preventing ToolbarItem overflow/hiding
@@ -159,7 +174,7 @@ struct SidebarView: View {
                         Image(systemName: "arrow.up.circle.fill")
                             .foregroundStyle(.orange)
                     }
-                    .help("Update available! Click to open settings.")
+                    .help(L10n.string(L10nKeys.sidebarHelpUpdateAvailable, bundle: localizationBundle, locale: locale))
                 }
             }
 
@@ -173,13 +188,21 @@ struct SidebarView: View {
                     Button {
                         installVM = SkillInstallViewModel(skillManager: skillManager)
                     } label: {
-                        Label("From GitHub...", systemImage: "globe")
+                        Label {
+                            LText(key: L10nKeys.sidebarInstallFromGitHub)
+                        } icon: {
+                            Image(systemName: "globe")
+                        }
                     }
 
                     Button {
                         localImportVM = LocalImportViewModel(skillManager: skillManager)
                     } label: {
-                        Label("From Local Folder...", systemImage: "folder")
+                        Label {
+                            LText(key: L10nKeys.sidebarInstallFromLocalFolder)
+                        } icon: {
+                            Image(systemName: "folder")
+                        }
                     }
                 } label: {
                     Image(systemName: "plus")
@@ -187,7 +210,7 @@ struct SidebarView: View {
                     // Default click action: open GitHub install (most common use case)
                     installVM = SkillInstallViewModel(skillManager: skillManager)
                 }
-                .help("Install skill")
+                .help(L10n.string(L10nKeys.sidebarHelpInstallSkill, bundle: localizationBundle, locale: locale))
             }
 
             // F12: Batch check updates for all skills
@@ -220,7 +243,7 @@ struct SidebarView: View {
                         Image(systemName: "arrow.triangle.2.circlepath")
                     }
                 }
-                .help("Check all skills for updates")
+                .help(L10n.string(L10nKeys.sidebarHelpCheckAllUpdates, bundle: localizationBundle, locale: locale))
                 .disabled(skillManager.isCheckingUpdates)
             }
 
@@ -231,7 +254,7 @@ struct SidebarView: View {
                 } label: {
                     Image(systemName: "arrow.clockwise")
                 }
-                .help("Refresh skills")
+                .help(L10n.string(L10nKeys.sidebarHelpRefreshSkills, bundle: localizationBundle, locale: locale))
             }
         }
         // F10: Install sheet modal
