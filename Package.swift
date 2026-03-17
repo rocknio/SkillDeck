@@ -7,6 +7,14 @@ import PackageDescription
 let package = Package(
     name: "SkillDeck",
 
+    // When a SwiftPM package contains localized resources (e.g. `*.lproj/Localizable.strings`),
+    // SwiftPM requires declaring a default localization.
+    //
+    // We set English as the default because:
+    // - it is our primary development language
+    // - it provides the fallback strings when a key is missing in other locales
+    defaultLocalization: "en",
+
     // Specify minimum platform: macOS 14 (Sonoma), because we use the @Observable macro (new feature in macOS 14+)
     platforms: [.macOS(.v14)],
 
@@ -29,13 +37,14 @@ let package = Package(
                 .product(name: "Markdown", package: "swift-markdown"),
             ],
             path: "Sources/SkillDeck",
-            // resources array tells SPM to bundle specified files into Bundle.module
-            // .process optimizes based on file type (e.g., PNG compression), .copy copies as is
-            // .icns files need to use .copy to preserve original format, as SPM doesn't recognize .icns type
-            resources: [
-                .copy("Resources/AppIcon.icns")
-            ]
-        ),
+             // resources array tells SPM to bundle specified files into Bundle.module
+             // .process optimizes based on file type (e.g., PNG compression), .copy copies as is
+             // .icns files need to use .copy to preserve original format, as SPM doesn't recognize .icns type
+             resources: [
+                .copy("Resources/AppIcon.icns"),
+                .process("Resources/Localizations"),
+             ]
+         ),
 
         // Unit test target, similar to Go's _test.go files
         .testTarget(
