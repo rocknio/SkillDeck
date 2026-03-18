@@ -3,30 +3,31 @@ import XCTest
 
 final class TranslationServiceTests: XCTestCase {
 
-    func testParseMyMemoryResponse_statusIsInt() throws {
-        let json = """
-        {
-          \"responseData\": { \"translatedText\": \"你好，世界！\", \"match\": 1 },
-          \"quotaFinished\": false,
-          \"responseDetails\": \"\",
-          \"responseStatus\": 200
-        }
-        """
+    private actor FakeClient: LocalTranslationClient {
+        private(set) var calls: [String] = []
+        let result: String
 
-        let translated = try MyMemoryResponseParser.parseTranslatedText(from: Data(json.utf8))
-        XCTAssertEqual(translated, "你好，世界！")
+        init(result: String) {
+            self.result = result
+        }
+
+        func translateEnglishToChinese(_ text: String) async throws -> String {
+            calls.append(text)
+            return result
+        }
     }
 
-    func testParseMyMemoryResponse_statusIsString_andReturnsError() {
-        let json = """
-        {
-          \"responseData\": { \"translatedText\": \"NO QUERY SPECIFIED. EXAMPLE REQUEST: GET?Q=HELLO&LANGPAIR=EN|IT\" },
-          \"quotaFinished\": false,
-          \"responseDetails\": \"NO QUERY SPECIFIED...\",
-          \"responseStatus\": \"403\"
-        }
-        """
+    func testTranslateEnglishToChinese_cachesByExactText() async throws {
+        let client = FakeClient(result: "你好")
+        let service = TranslationService(client: client)
 
-        XCTAssertThrowsError(try MyMemoryResponseParser.parseTranslatedText(from: Data(json.utf8)))
+        let t1 = try await service.translateEnglishToChinese("Hello")
+        let t2 = try await service.translateEnglishToChinese("Hello")
+
+        XCTAssertEqual(t1, "你好")
+        XCTAssertEqual(t2, "你好")
+
+        let calls = await client.calls
+        XCTAssertEqual(calls, ["Hello"])
     }
 }
