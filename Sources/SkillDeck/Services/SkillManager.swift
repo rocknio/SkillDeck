@@ -205,23 +205,8 @@ final class SkillManager {
 
             skills = allSkills
 
-            // F12: Restore previous update status (refresh should not clear update check results)
-            // Also restore remote hashes and local commit hash.
-            // When refresh() replaces the skills array, all transient Skill struct fields are lost.
-            // We restore them from cached dictionaries so the "Update" button continues to work.
-            for i in skills.indices {
-                let skillID = skills[i].id
-                if let status = updateStatuses[skillID] {
-                    skills[i].hasUpdate = (status == .hasUpdate)
-                }
-                // Restore remote tree hash (needed by updateSkill to know which version to update to)
-                skills[i].remoteTreeHash = cachedRemoteTreeHashes[skillID]
-                // Restore remote commit hash (needed for GitHub compare URL in UI)
-                skills[i].remoteCommitHash = cachedRemoteCommitHashes[skillID]
-                // Read local commit hash from CommitHashCache
-                // Used for displaying hash comparison in UI and generating GitHub compare URL
-                skills[i].localCommitHash = await commitHashCache.getHash(for: skillID)
-            }
+            // Restore transient fields that are lost when the skills array is replaced
+            await restoreTransientSkillFields()
 
             // Start file system monitoring
             startWatching()
@@ -230,6 +215,34 @@ final class SkillManager {
         }
 
         isLoading = false
+    }
+
+    /// Restore transient Skill fields (hasUpdate, remoteTreeHash, etc.) from cached state.
+    ///
+    /// When refresh() replaces the skills array with freshly scanned Skill structs, all transient
+    /// fields (hasUpdate, remoteTreeHash, remoteCommitHash, localCommitHash) are lost because
+    /// new structs are created from disk data only. This method restores those fields from
+    /// in-memory caches (updateStatuses, cachedRemoteTreeHashes, cachedRemoteCommitHashes)
+    /// so the "Update" button and GitHub compare URLs continue to work after a refresh.
+    ///
+    /// Visibility is `internal` (default in Swift) so unit tests can call it directly via
+    /// `@testable import`, without needing to invoke the full refresh() pipeline that
+    /// depends on real filesystem scanning.
+    func restoreTransientSkillFields() async {
+        for i in skills.indices {
+            let skillID = skills[i].id
+            // Restore hasUpdate from updateStatuses dictionary
+            if let status = updateStatuses[skillID] {
+                skills[i].hasUpdate = (status == .hasUpdate)
+            }
+            // Restore remote tree hash (needed by updateSkill to know which version to update to)
+            skills[i].remoteTreeHash = cachedRemoteTreeHashes[skillID]
+            // Restore remote commit hash (needed for GitHub compare URL in UI)
+            skills[i].remoteCommitHash = cachedRemoteCommitHashes[skillID]
+            // Read local commit hash from CommitHashCache
+            // Used for displaying hash comparison in UI and generating GitHub compare URL
+            skills[i].localCommitHash = await commitHashCache.getHash(for: skillID)
+        }
     }
 
     /// Start watching file system, monitor all relevant directories
