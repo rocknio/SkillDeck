@@ -267,7 +267,7 @@ struct ClawHubSkillDetailView: View {
                 .padding(.vertical, 8)
             } else if let content = viewModel.fetchedContent {
                 if !content.markdownBody.isEmpty {
-                    MarkdownContentView(markdownText: content.markdownBody)
+                    MarkdownContentView(markdownText: content.markdownBody, showsChineseTranslation: true)
                 } else {
                     Text("No content available.")
                         .foregroundStyle(.secondary)
