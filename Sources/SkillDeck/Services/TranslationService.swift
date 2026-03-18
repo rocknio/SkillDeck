@@ -1,0 +1,53 @@
+import Foundation
+import Translation
+
+protocol LocalTranslationClient: Sendable {
+    func translateEnglishToChinese(_ text: String) async throws -> String
+}
+
+actor TranslationService {
+
+    enum TranslationError: Error {
+        case unavailable
+    }
+
+    private let client: any LocalTranslationClient
+    private var cache: [String: String] = [:]
+
+    init(client: any LocalTranslationClient = DefaultLocalTranslationClient()) {
+        self.client = client
+    }
+
+    func translateEnglishToChinese(_ text: String) async throws -> String {
+        if let cached = cache[text] {
+            return cached
+        }
+
+        let translated = try await client.translateEnglishToChinese(text)
+        cache[text] = translated
+        return translated
+    }
+}
+
+private struct DefaultLocalTranslationClient: LocalTranslationClient {
+    func translateEnglishToChinese(_ text: String) async throws -> String {
+        if #available(macOS 26.0, *) {
+            return try await TranslationFrameworkClient().translateEnglishToChinese(text)
+        }
+
+        throw TranslationService.TranslationError.unavailable
+    }
+}
+
+@available(macOS 26.0, *)
+private struct TranslationFrameworkClient: LocalTranslationClient {
+    func translateEnglishToChinese(_ text: String) async throws -> String {
+        let session = TranslationSession(
+            installedSource: Locale.Language(identifier: "en"),
+            target: Locale.Language(identifier: "zh-Hans")
+        )
+
+        let response = try await session.translate(text)
+        return response.targetText
+    }
+}

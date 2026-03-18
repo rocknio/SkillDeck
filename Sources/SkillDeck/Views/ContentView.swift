@@ -12,6 +12,8 @@ import SwiftUI
 struct ContentView: View {
 
     @Environment(SkillManager.self) private var skillManager
+    @Environment(\.localizationBundle) private var localizationBundle
+    @Environment(\.locale) private var locale
 
     /// Sidebar visibility state for NavigationSplitView
     @State private var columnVisibility = NavigationSplitViewVisibility.all
@@ -81,8 +83,8 @@ struct ContentView: View {
                 } else {
                     EmptyStateView(
                         icon: "globe",
-                        title: "Select a Skill",
-                        subtitle: "Choose a skill from the registry to view its details"
+                        title: L10n.string(L10nKeys.emptySelectSkillTitle, bundle: localizationBundle, locale: locale),
+                        subtitle: L10n.string(L10nKeys.emptySelectSkillSubtitleRegistry, bundle: localizationBundle, locale: locale)
                     )
                 }
             } else if selectedSidebarItem == .clawHub {
@@ -97,8 +99,8 @@ struct ContentView: View {
                 } else {
                     EmptyStateView(
                         icon: "shippingbox",
-                        title: "Select a Skill",
-                        subtitle: "Choose a skill from ClawHub to view its details"
+                        title: L10n.string(L10nKeys.emptySelectSkillTitle, bundle: localizationBundle, locale: locale),
+                        subtitle: L10n.string(L10nKeys.emptySelectSkillSubtitleClawHub, bundle: localizationBundle, locale: locale)
                     )
                 }
             } else if let skillID = selectedSkillID, let vm = detailVM {
@@ -106,8 +108,8 @@ struct ContentView: View {
             } else {
                 EmptyStateView(
                     icon: "square.stack.3d.up",
-                    title: "Select a Skill",
-                    subtitle: "Choose a skill from the list to view its details"
+                    title: L10n.string(L10nKeys.emptySelectSkillTitle, bundle: localizationBundle, locale: locale),
+                    subtitle: L10n.string(L10nKeys.emptySelectSkillSubtitleList, bundle: localizationBundle, locale: locale)
                 )
             }
         }
@@ -127,6 +129,23 @@ struct ContentView: View {
         // Implements sidebar click → Dashboard list filter linkage effect
         .onChange(of: selectedSidebarItem) { _, newValue in
             dashboardVM?.selectedAgentFilter = newValue?.agentFilter
+        }
+        .alert(
+            item: Binding(
+                get: { skillManager.translationPackPrompt },
+                set: { skillManager.translationPackPrompt = $0 }
+            )
+        ) { prompt in
+            Alert(
+                title: Text(prompt.title),
+                message: Text(prompt.message),
+                primaryButton: .default(Text("知道了")) {
+                    skillManager.dismissTranslationPackPrompt()
+                },
+                secondaryButton: .default(Text("下次不再提示")) {
+                    skillManager.dontShowTranslationPackPromptAgain()
+                }
+            )
         }
     }
 }

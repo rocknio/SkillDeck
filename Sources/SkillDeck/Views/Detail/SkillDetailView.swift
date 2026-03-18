@@ -13,6 +13,9 @@ struct SkillDetailView: View {
     let skillID: String
     @Bindable var viewModel: SkillDetailViewModel
     @Environment(SkillManager.self) private var skillManager
+    @Environment(\.locale) private var locale
+
+    @AppStorage(LanguageSettings.appLanguageKey) private var appLanguageRaw: String = LanguageSettings.defaultLanguage.rawValue
 
     /// Editor ViewModel (created only during editing)
     @State private var editorVM: SkillEditorViewModel?
@@ -50,6 +53,11 @@ struct SkillDetailView: View {
                 .padding()
             }
             .navigationTitle(skill.displayName)
+            .task(id: skillID) {
+                await skillManager.maybeShowTranslationPackPromptIfNeeded(
+                    translationEnabledOnThisScreen: showsChineseTranslation
+                )
+            }
             .toolbar {
                 ToolbarItemGroup {
                     // Reveal in Finder
@@ -97,6 +105,10 @@ struct SkillDetailView: View {
                 subtitle: "The selected skill may have been deleted"
             )
         }
+    }
+
+    private var showsChineseTranslation: Bool {
+        AppLanguage(storedRawValue: appLanguageRaw).shouldTranslateSkillContent(locale: locale)
     }
 
     // MARK: - Sections
@@ -194,10 +206,10 @@ struct SkillDetailView: View {
                     .foregroundStyle(.tertiary)
                     .italic()
             } else {
-                // Display markdown source in monospace font
-                // Can be replaced with rendered markdown in the future
-                Text(skill.markdownBody).appFont(.body, design: .monospaced)
-                    .textSelection(.enabled)
+                MarkdownContentView(
+                    markdownText: skill.markdownBody,
+                    showsChineseTranslation: AppLanguage(storedRawValue: appLanguageRaw).shouldTranslateSkillContent(locale: locale)
+                )
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
                     .background(Color(nsColor: .textBackgroundColor))

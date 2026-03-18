@@ -18,29 +18,88 @@ import Markdown
 ///
 /// Usage: `MarkdownContentView(markdownText: "# Hello\n\nSome **bold** text")`
 struct MarkdownContentView: View {
+ 
+     /// Raw markdown string to parse and render
+     let markdownText: String
 
-    /// Raw markdown string to parse and render
-    let markdownText: String
+    /// Whether to show zh-CN translations under Paragraph blocks.
+    let showsChineseTranslation: Bool
+
+     init(markdownText: String, showsChineseTranslation: Bool = false) {
+         self.markdownText = markdownText
+         self.showsChineseTranslation = showsChineseTranslation
+     }
 
     var body: some View {
         // Parse the markdown string into an AST using swift-markdown's Document type.
         // `Document(parsing:)` creates a tree of `Markup` nodes (Heading, Paragraph, CodeBlock, etc.).
         // This is similar to how an HTML parser creates a DOM tree.
-        let document = Document(parsing: markdownText)
+        let document = Document(parsing: MarkdownPreprocessor.stripWrapperTags(markdownText))
 
         // Walk the AST and convert each block-level node into a SwiftUI view.
         // `document.children` returns the top-level block elements (headings, paragraphs, etc.).
         // `LazyVStack` defers view creation until needed (performance optimization for long content).
         LazyVStack(alignment: .leading, spacing: 12) {
             ForEach(Array(document.children.enumerated()), id: \.offset) { _, child in
-                // Render each top-level block element using our custom visitor
                 MarkdownNodeView(node: child)
             }
         }
         // Enable text selection across the entire rendered markdown content
         .textSelection(.enabled)
+        .environment(\.markdownShowsChineseTranslation, showsChineseTranslation)
     }
 }
+
+private struct TranslatedParagraphView: View {
+     let englishText: SwiftUI.Text
+     let plainEnglishText: String
+
+     @Environment(SkillManager.self) private var skillManager
+
+     @State private var translatedText: String?
+     @State private var translationFailed = false
+
+     var body: some View {
+         VStack(alignment: .leading, spacing: 4) {
+             englishText
+                 .appFont(.body)
+                 .fixedSize(horizontal: false, vertical: true)
+
+             if let translatedText {
+                 Text(translatedText)
+                     .appFont(.subheadline)
+                     .foregroundStyle(.secondary)
+                     .fixedSize(horizontal: false, vertical: true)
+             } else if translationFailed {
+                 Text("翻译失败")
+                     .appFont(.subheadline)
+                     .foregroundStyle(.secondary)
+                     .italic()
+             } else {
+                 Text("翻译中…")
+                     .appFont(.subheadline)
+                     .foregroundStyle(.secondary)
+                     .italic()
+             }
+         }
+         .task(id: plainEnglishText) {
+             let input = plainEnglishText
+             guard !input.isEmpty else {
+                 translatedText = nil
+                 translationFailed = false
+                 return
+             }
+
+             do {
+                 translationFailed = false
+                 translatedText = try await skillManager.translateEnglishParagraphToChinese(input)
+             } catch {
+                 translatedText = nil
+                 translationFailed = true
+             }
+         }
+     }
+ }
 
 // MARK: - Block Node View
 
@@ -62,14 +121,30 @@ struct MarkdownNodeView: View {
     /// @Environment reads app-wide font preferences for consistent markdown rendering.
     @Environment(\.appFontFamily) private var appFontFamily
     @Environment(\.appFontBaseSize) private var appFontBaseSize
+    @Environment(\.markdownShowsChineseTranslation) private var markdownShowsChineseTranslation
 
     var body: some View {
         // Create a visitor instance and dispatch the node to the appropriate visit* method.
         // `visit()` is the entry point that calls the specific `visitHeading()`, `visitParagraph()`, etc.
         // based on the runtime type of the node (dynamic dispatch via protocol).
-        var visitor = SwiftUIMarkdownVisitor(fontFamily: appFontFamily, baseSize: appFontBaseSize)
+        var visitor = SwiftUIMarkdownVisitor(
+            fontFamily: appFontFamily,
+            baseSize: appFontBaseSize,
+            showsChineseTranslation: markdownShowsChineseTranslation
+        )
         let result = visitor.visit(node)
         result
+    }
+}
+
+private struct MarkdownShowsChineseTranslationKey: EnvironmentKey {
+    static let defaultValue: Bool = false
+}
+
+private extension EnvironmentValues {
+    var markdownShowsChineseTranslation: Bool {
+        get { self[MarkdownShowsChineseTranslationKey.self] }
+        set { self[MarkdownShowsChineseTranslationKey.self] = newValue }
     }
 }
 
@@ -103,10 +178,16 @@ struct SwiftUIMarkdownVisitor: MarkupVisitor {
 
     let fontFamily: String
     let baseSize: Double
+    let showsChineseTranslation: Bool
 
-    init(fontFamily: String = FontSettings.systemFontFamily, baseSize: Double = FontSettings.defaultFontSize) {
+    init(
+        fontFamily: String = FontSettings.systemFontFamily,
+        baseSize: Double = FontSettings.defaultFontSize,
+        showsChineseTranslation: Bool = false
+    ) {
         self.fontFamily = fontFamily
         self.baseSize = baseSize
+        self.showsChineseTranslation = showsChineseTranslation
     }
 
     // MARK: - Block Elements
@@ -140,11 +221,17 @@ struct SwiftUIMarkdownVisitor: MarkupVisitor {
     /// A Paragraph contains inline children (Text, Strong, Emphasis, InlineCode, Link, etc.).
     /// We build a single `SwiftUI.Text` by concatenating inline elements with `+` operator.
     mutating func visitParagraph(_ paragraph: Paragraph) -> AnyView {
-        let text = buildInlineText(from: paragraph)
+        let englishText = buildInlineText(from: paragraph)
+        let plain = MarkdownPlainTextExtractor.extract(from: paragraph)
+
+        if showsChineseTranslation, !plain.isEmpty {
+            return AnyView(
+                TranslatedParagraphView(englishText: englishText, plainEnglishText: plain)
+            )
+        }
+
         return AnyView(
-            text.appFont(.body)
-                // `fixedSize` prevents text from being truncated; it allows the text to grow
-                // vertically as needed. `horizontal: false` keeps horizontal wrapping behavior.
+            englishText.appFont(.body)
                 .fixedSize(horizontal: false, vertical: true)
         )
     }

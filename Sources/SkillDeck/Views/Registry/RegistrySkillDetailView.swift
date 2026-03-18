@@ -30,6 +30,10 @@ struct RegistrySkillDetailView: View {
     /// Passed from ContentView where the ViewModel is already available.
     let viewModel: RegistryBrowserViewModel
 
+    @AppStorage(LanguageSettings.appLanguageKey) private var appLanguageRaw: String = LanguageSettings.defaultLanguage.rawValue
+    @Environment(\.locale) private var locale
+    @Environment(SkillManager.self) private var skillManager
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
@@ -68,6 +72,15 @@ struct RegistrySkillDetailView: View {
         .task(id: skill.id) {
             await viewModel.loadSkillContent(for: skill)
         }
+        .task(id: skill.id) {
+            await skillManager.maybeShowTranslationPackPromptIfNeeded(
+                translationEnabledOnThisScreen: showsChineseTranslation
+            )
+        }
+    }
+
+    private var showsChineseTranslation: Bool {
+        AppLanguage(storedRawValue: appLanguageRaw).shouldTranslateSkillContent(locale: locale)
     }
 
     // MARK: - Sections
@@ -323,7 +336,10 @@ struct RegistrySkillDetailView: View {
                 // and renders each block element (headings, paragraphs, code blocks, etc.)
                 // as native SwiftUI views.
                 if !content.markdownBody.isEmpty {
-                    MarkdownContentView(markdownText: content.markdownBody)
+                    MarkdownContentView(
+                        markdownText: content.markdownBody,
+                        showsChineseTranslation: AppLanguage(storedRawValue: appLanguageRaw).shouldTranslateSkillContent(locale: locale)
+                    )
                 } else {
                     Text("No content available.")
                         .foregroundStyle(.secondary).appFont(.subheadline)
