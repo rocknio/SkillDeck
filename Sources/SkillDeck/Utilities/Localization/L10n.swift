@@ -90,12 +90,23 @@ enum L10n {
         candidates.append(identifier)
         candidates.append(identifier.replacingOccurrences(of: "_", with: "-"))
 
+        if let languageCode = locale.language.languageCode?.identifier,
+           let scriptCode = locale.language.script?.identifier {
+            candidates.append("\(languageCode)-\(scriptCode)")
+            candidates.append("\(languageCode)_\(scriptCode)")
+        }
+
         // `Locale.languageCode` was deprecated; the modern API is `locale.language.languageCode?.identifier`.
         if let languageCode = locale.language.languageCode?.identifier {
             candidates.append(languageCode)
         }
 
-        for name in candidates {
+        var deduplicated: [String] = []
+        for candidate in candidates where !deduplicated.contains(candidate) {
+            deduplicated.append(candidate)
+        }
+
+        for name in deduplicated {
             if let path = bundle.path(forResource: name, ofType: "lproj"), let lprojBundle = Bundle(path: path) {
                 return lprojBundle
             }
