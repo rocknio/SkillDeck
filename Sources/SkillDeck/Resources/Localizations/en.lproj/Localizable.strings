@@ -1,0 +1,93 @@
+/*
+  Localizable.strings
+  SkillDeck
+
+  English (Base) translations.
+*/
+
+"settings.tab.general" = "General";
+"settings.tab.proxy" = "Proxy";
+"app.name" = "SkillDeck";
+"settings.tab.about" = "About";
+
+"settings.proxy.section.enable" = "Enable";
+"settings.proxy.enableProxy" = "Enable Proxy";
+
+"settings.proxy.section.server" = "Server";
+"settings.proxy.importFromEnvironment" = "Import from Environment";
+"settings.proxy.field.type.label" = "Type";
+"settings.proxy.field.type.hint" = "HTTPS / SOCKS5";
+"settings.proxy.field.host.label" = "Host";
+"settings.proxy.field.host.hint" = "e.g. 127.0.0.1";
+"settings.proxy.field.port.label" = "Port";
+"settings.proxy.field.port.hint" = "1–65535";
+"settings.proxy.validation.invalidHostPort" = "Host must be non-empty and port must be between 1 and 65535.";
+
+"settings.proxy.section.authentication" = "Authentication";
+"settings.proxy.enableAuthentication" = "Enable Authentication";
+"settings.proxy.field.username.label" = "Username";
+"settings.proxy.field.username.hint" = "optional";
+"settings.proxy.field.password.label" = "Password";
+"settings.proxy.field.password.hint" = "Keychain";
+"settings.proxy.savePassword" = "Save Password";
+"settings.proxy.clearPassword" = "Clear Password";
+
+"settings.proxy.section.bypass" = "Bypass";
+"settings.proxy.bypass.description" = "Requests matching these hosts will NOT use the proxy. Separate items with commas or new lines.";
+"settings.proxy.bypass.examples" = "Examples: localhost, 127.0.0.1, *.internal";
+
+"settings.proxy.status.import.noneFound" = "No proxy environment variables found.";
+"settings.proxy.status.import.imported" = "Imported";
+"settings.proxy.status.import.importedPasswordSaveFailed" = "Imported (password save failed)";
+
+"settings.proxy.status.password.saved" = "Saved";
+"settings.proxy.status.password.saveFailed" = "Save failed";
+"settings.proxy.status.password.cleared" = "Cleared";
+"settings.proxy.status.password.clearFailed" = "Clear failed";
+
+"settings.section.paths" = "Paths";
+"settings.section.paths.sharedSkills" = "Shared Skills";
+"settings.section.paths.lockFile" = "Lock File";
+
+"settings.section.language" = "Language";
+"settings.language.appLanguage" = "App Language";
+"settings.language.systemDefault" = "System Default";
+"settings.language.english" = "English";
+"settings.language.chineseHans" = "中文";
+
+"settings.section.font" = "Font";
+"settings.font.family" = "Family";
+"settings.font.size" = "Size";
+"settings.font.previewSentence" = "Preview: The quick brown fox jumps over the lazy dog";
+
+"settings.about.appName" = "SkillDeck";
+"settings.about.tagline" = "Native macOS Agent Skills Manager";
+"settings.about.github" = "GitHub";
+
+"settings.update.checking" = "Checking for updates...";
+"settings.update.downloading" = "Downloading... %d%%";
+"settings.update.retry" = "Retry";
+"settings.update.availablePrefix" = "Update available: v%@";
+"settings.update.now" = "Update Now";
+"settings.update.viewOnGitHub" = "View on GitHub";
+"settings.update.checkForUpdates" = "Check for Updates";
+
+"sidebar.section.overview" = "Overview";
+"sidebar.section.agents" = "Agents";
+"sidebar.dashboard" = "Dashboard";
+"sidebar.registry" = "Registry";
+"sidebar.clawhub" = "ClawHub";
+"sidebar.help.updateAvailable" = "Update available! Click to open settings.";
+"sidebar.install.fromGitHub" = "From GitHub...";
+"sidebar.install.fromLocalFolder" = "From Local Folder...";
+"sidebar.help.installSkill" = "Install skill";
+"sidebar.help.checkAllUpdates" = "Check all skills for updates";
+"sidebar.help.refreshSkills" = "Refresh skills";
+
+"empty.selectSkill.title" = "Select a Skill";
+"empty.selectSkill.subtitle.list" = "Choose a skill from the list to view its details";
+"empty.selectSkill.subtitle.registry" = "Choose a skill from the registry to view its details";
+"empty.selectSkill.subtitle.clawhub" = "Choose a skill from ClawHub to view its details";
+
+"dashboard.language.menuLabel" = "Language";
+"dashboard.language.menuHelp" = "Switch app language";

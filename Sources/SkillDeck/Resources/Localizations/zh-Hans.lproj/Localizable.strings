@@ -1,0 +1,93 @@
+/*
+  Localizable.strings
+  SkillDeck
+
+  Simplified Chinese translations.
+*/
+
+"settings.tab.general" = "通用";
+"settings.tab.proxy" = "代理";
+"app.name" = "SkillDeck";
+"settings.tab.about" = "关于";
+
+"settings.proxy.section.enable" = "启用";
+"settings.proxy.enableProxy" = "启用代理";
+
+"settings.proxy.section.server" = "服务器";
+"settings.proxy.importFromEnvironment" = "从环境变量导入";
+"settings.proxy.field.type.label" = "类型";
+"settings.proxy.field.type.hint" = "HTTPS / SOCKS5";
+"settings.proxy.field.host.label" = "主机";
+"settings.proxy.field.host.hint" = "例如 127.0.0.1";
+"settings.proxy.field.port.label" = "端口";
+"settings.proxy.field.port.hint" = "1–65535";
+"settings.proxy.validation.invalidHostPort" = "主机不能为空，端口必须在 1 到 65535 之间。";
+
+"settings.proxy.section.authentication" = "认证";
+"settings.proxy.enableAuthentication" = "启用认证";
+"settings.proxy.field.username.label" = "用户名";
+"settings.proxy.field.username.hint" = "可选";
+"settings.proxy.field.password.label" = "密码";
+"settings.proxy.field.password.hint" = "钥匙串";
+"settings.proxy.savePassword" = "保存密码";
+"settings.proxy.clearPassword" = "清除密码";
+
+"settings.proxy.section.bypass" = "绕过";
+"settings.proxy.bypass.description" = "匹配这些主机的请求不会使用代理。使用逗号或换行分隔多个项。";
+"settings.proxy.bypass.examples" = "示例：localhost, 127.0.0.1, *.internal";
+
+"settings.proxy.status.import.noneFound" = "未找到代理环境变量。";
+"settings.proxy.status.import.imported" = "已导入";
+"settings.proxy.status.import.importedPasswordSaveFailed" = "已导入（密码保存失败）";
+
+"settings.proxy.status.password.saved" = "已保存";
+"settings.proxy.status.password.saveFailed" = "保存失败";
+"settings.proxy.status.password.cleared" = "已清除";
+"settings.proxy.status.password.clearFailed" = "清除失败";
+
+"settings.section.paths" = "路径";
+"settings.section.paths.sharedSkills" = "共享技能";
+"settings.section.paths.lockFile" = "锁文件";
+
+"settings.section.language" = "语言";
+"settings.language.appLanguage" = "应用语言";
+"settings.language.systemDefault" = "跟随系统";
+"settings.language.english" = "英文";
+"settings.language.chineseHans" = "中文";
+
+"settings.section.font" = "字体";
+"settings.font.family" = "字体";
+"settings.font.size" = "大小";
+"settings.font.previewSentence" = "预览：敏捷的棕色狐狸跳过了懒狗";
+
+"settings.about.appName" = "SkillDeck";
+"settings.about.tagline" = "原生 macOS Agent 技能管理器";
+"settings.about.github" = "GitHub";
+
+"settings.update.checking" = "正在检查更新...";
+"settings.update.downloading" = "正在下载... %d%%";
+"settings.update.retry" = "重试";
+"settings.update.availablePrefix" = "有可用更新：v%@";
+"settings.update.now" = "立即更新";
+"settings.update.viewOnGitHub" = "在 GitHub 查看";
+"settings.update.checkForUpdates" = "检查更新";
+
+"sidebar.section.overview" = "概览";
+"sidebar.section.agents" = "代理";
+"sidebar.dashboard" = "仪表盘";
+"sidebar.registry" = "技能市场";
+"sidebar.clawhub" = "ClawHub";
+"sidebar.help.updateAvailable" = "有可用更新！点击打开设置。";
+"sidebar.install.fromGitHub" = "从 GitHub...";
+"sidebar.install.fromLocalFolder" = "从本地文件夹...";
+"sidebar.help.installSkill" = "安装技能";
+"sidebar.help.checkAllUpdates" = "检查所有技能更新";
+"sidebar.help.refreshSkills" = "刷新技能";
+
+"empty.selectSkill.title" = "选择一个技能";
+"empty.selectSkill.subtitle.list" = "从列表中选择一个技能以查看详情";
+"empty.selectSkill.subtitle.registry" = "从市场中选择一个技能以查看详情";
+"empty.selectSkill.subtitle.clawhub" = "从 ClawHub 中选择一个技能以查看详情";
+
+"dashboard.language.menuLabel" = "语言";
+"dashboard.language.menuHelp" = "切换应用语言";

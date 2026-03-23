@@ -12,6 +12,10 @@ struct ClawHubSkillDetailView: View {
     let onInstall: () -> Void
     let viewModel: ClawHubBrowserViewModel
 
+    @AppStorage(LanguageSettings.appLanguageKey) private var appLanguageRaw: String = LanguageSettings.defaultLanguage.rawValue
+    @Environment(\.locale) private var locale
+    @Environment(SkillManager.self) private var skillManager
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
@@ -32,6 +36,15 @@ struct ClawHubSkillDetailView: View {
         .task(id: skill.id) {
             await viewModel.loadSelection(for: skill)
         }
+        .task(id: skill.id) {
+            await skillManager.maybeShowTranslationPackPromptIfNeeded(
+                translationEnabledOnThisScreen: showsChineseTranslation
+            )
+        }
+    }
+
+    private var showsChineseTranslation: Bool {
+        AppLanguage(storedRawValue: appLanguageRaw).shouldTranslateSkillContent(locale: locale)
     }
 
     // MARK: - Sections
@@ -267,7 +280,10 @@ struct ClawHubSkillDetailView: View {
                 .padding(.vertical, 8)
             } else if let content = viewModel.fetchedContent {
                 if !content.markdownBody.isEmpty {
-                    MarkdownContentView(markdownText: content.markdownBody)
+                    MarkdownContentView(
+                        markdownText: content.markdownBody,
+                        showsChineseTranslation: AppLanguage(storedRawValue: appLanguageRaw).shouldTranslateSkillContent(locale: locale)
+                    )
                 } else {
                     Text("No content available.")
                         .foregroundStyle(.secondary)
