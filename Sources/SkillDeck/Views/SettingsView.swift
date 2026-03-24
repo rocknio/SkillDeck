@@ -197,6 +197,7 @@ struct GeneralSettingsView: View {
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.allowsMultipleSelection = false
+        panel.showsHiddenFiles = true  // Allow viewing hidden directories (e.g., ~/.openclaw)
         panel.message = "Select OpenClaw skills directory"
         panel.prompt = "Select"
 
