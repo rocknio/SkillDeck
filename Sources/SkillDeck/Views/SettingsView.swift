@@ -148,30 +148,28 @@ struct GeneralSettingsView: View {
                             openClawCustomPath = ""
                             // Trigger refresh to update skills from default path
                             Task { await skillManager.refresh() }
-                        } else if !openClawCustomPath.isEmpty {
-                            // User turned on custom path and path exists: save and refresh
-                            AgentPathSettings.setCustomPath(openClawCustomPath, for: .openClaw)
-                            Task { await skillManager.refresh() }
                         }
+                        // Note: When toggle is turned on, user must use Browse button to select path
                     }
 
                 if isUsingCustomOpenClawPath {
-                    HStack(spacing: 8) {
-                        TextField("Custom path", text: $openClawCustomPath)
-                            .textFieldStyle(.roundedBorder)
-                            .onChange(of: openClawCustomPath) { _, newValue in
-                                if isUsingCustomOpenClawPath && !newValue.isEmpty {
-                                    AgentPathSettings.setCustomPath(newValue, for: .openClaw)
-                                    // Trigger refresh to update skills from new path
-                                    Task { await skillManager.refresh() }
-                                }
-                            }
+                    LabeledContent {
+                        HStack(spacing: 8) {
+                            // Display path as read-only text (consistent with Shared Skills Path style)
+                            Text(openClawCustomPath.isEmpty ? "Not configured" : openClawCustomPath)
+                                .foregroundStyle(openClawCustomPath.isEmpty ? .secondary : .primary)
+                                .textSelection(.enabled)
+                                .lineLimit(1)
+                                .truncationMode(.middle)
 
-                        Button("Browse...") {
-                            selectOpenClawDirectory()
+                            Button("Browse...") {
+                                selectOpenClawDirectory()
+                            }
+                            .buttonStyle(.bordered)
+                            .controlSize(.small)
                         }
-                        .buttonStyle(.bordered)
-                        .controlSize(.small)
+                    } label: {
+                        Text("Skills Directory")
                     }
 
                     Text("Default: ~/.openclaw/skills")
