@@ -14,7 +14,7 @@ enum AgentType: String, CaseIterable, Identifiable, Codable {
     case codeBuddy = "codebuddy"           // CodeBuddy: Tencent Cloud AI coding assistant (https://www.codebuddy.ai)
     case openClaw = "openclaw"             // OpenClaw: AI coding assistant with ClawHub registry (https://openclaw.ai)
     case trae = "trae"                       // Trae: ByteDance's AI IDE (https://trae.ai)
-    case qoder = "qoder"                     // Qoder: AI coding agent
+    case qoder = "qoder"                     // Qoder: AI coding agent (https://qoder.ai)
 
     // Identifiable protocol requirement (similar to Java's Comparable), needed for SwiftUI list rendering
     var id: String { rawValue }
